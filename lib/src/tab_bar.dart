@@ -640,6 +640,7 @@ class ExtendedTabBar extends StatefulWidget implements PreferredSizeWidget {
     this.indicatorColor,
     this.automaticIndicatorColorAdjustment = true,
     this.indicatorWeight = 2.0,
+    this.indicatorRadius = 0,
     this.indicatorPadding = EdgeInsets.zero,
     this.indicator,
     this.indicatorSize,
@@ -703,6 +704,8 @@ class ExtendedTabBar extends StatefulWidget implements PreferredSizeWidget {
   /// If [indicator] is specified or provided from [TabBarTheme],
   /// this property is ignored.
   final double indicatorWeight;
+
+  final double indicatorRadius;
 
   /// The horizontal padding for the line that appears below the selected tab.
   ///
@@ -937,6 +940,7 @@ class _ExtendedTabBarState extends State<ExtendedTabBar> {
         width: widget.indicatorWeight,
         color: color,
       ),
+      indicatorRadius: widget.indicatorRadius,
       scrollDirection: widget.scrollDirection,
       strokeCap: widget.strokeCap,
     );

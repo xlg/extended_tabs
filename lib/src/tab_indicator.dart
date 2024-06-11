@@ -42,6 +42,7 @@ class ExtendedUnderlineTabIndicator extends Decoration {
   /// The [borderSide] and [insets] arguments must not be null.
   const ExtendedUnderlineTabIndicator({
     this.borderSide = const BorderSide(width: 2.0, color: Colors.white),
+    this.indicatorRadius = 0.0,
     this.insets = EdgeInsets.zero,
     this.scrollDirection = Axis.horizontal,
     this.strokeCap = StrokeCap.square,
@@ -50,6 +51,8 @@ class ExtendedUnderlineTabIndicator extends Decoration {
 
   /// The color and weight of the horizontal line drawn below the selected tab.
   final BorderSide borderSide;
+
+  final double indicatorRadius;
 
   /// Locates the selected tab's underline relative to the tab's boundary.
   ///
@@ -77,6 +80,7 @@ class ExtendedUnderlineTabIndicator extends Decoration {
     if (a is ExtendedUnderlineTabIndicator) {
       return ExtendedUnderlineTabIndicator(
         borderSide: BorderSide.lerp(a.borderSide, borderSide, t),
+        indicatorRadius: a.indicatorRadius,
         insets: EdgeInsetsGeometry.lerp(a.insets, insets, t)!,
         scrollDirection: a.scrollDirection,
         size: a.size,
@@ -90,6 +94,7 @@ class ExtendedUnderlineTabIndicator extends Decoration {
     if (b is ExtendedUnderlineTabIndicator) {
       return ExtendedUnderlineTabIndicator(
         borderSide: BorderSide.lerp(borderSide, b.borderSide, t),
+        indicatorRadius: b.indicatorRadius,
         insets: EdgeInsetsGeometry.lerp(insets, b.insets, t)!,
         scrollDirection: b.scrollDirection,
         size: b.size,
@@ -123,6 +128,14 @@ class ExtendedUnderlineTabIndicator extends Decoration {
           );
   }
 
+  ///绘制圆角矩形的Paint
+  Paint _indicatorCirclePaint(){
+    return Paint()
+        ..style = PaintingStyle.fill
+      ..color = borderSide.color;
+    ;
+  }
+
   @override
   Path getClipPath(Rect rect, TextDirection textDirection) {
     return Path()
@@ -146,9 +159,43 @@ class _UnderlinePainter extends BoxPainter {
         .deflate(decoration.borderSide.width / 2.0);
     final Paint paint = decoration.borderSide.toPaint()
       ..strokeCap = decoration.strokeCap;
+
+    RRect? rrect;
+    if (decoration.indicatorRadius > 0) {
+      // 起点和终点
+      final startPoint = indicator.topLeft;
+      final endPoint = indicator.topRight;
+
+      // 计算线的长度和角度
+      final lineLength = (endPoint - startPoint).distance;
+      final angle = (endPoint - startPoint).direction;
+
+      // 定义矩形的宽度（即线的宽度）和高度（即线的厚度）
+      final lineWidth = lineLength;
+      final double lineThickness = decoration.borderSide.width; // 线的厚度
+      final radius = Radius.circular(lineThickness / 2);
+
+      // 创建一个带圆角的矩形
+      final nrect = Rect.fromLTWH(
+        startPoint.dx,
+        startPoint.dy - lineThickness / 2,
+        lineWidth,
+        lineThickness,
+      );
+       rrect = RRect.fromRectAndRadius(nrect, radius);
+    }
+
+    // final rrect = RRect.fromLTRBR(startPoint.dx, startPoint.dy, endPoint.dx, endPoint.dy+5, Radius.circular(5));
     switch (decoration.scrollDirection) {
       case Axis.horizontal:
-        canvas.drawLine(indicator.bottomLeft, indicator.bottomRight, paint);
+        if (decoration.indicatorRadius > 0 && rrect != null) {
+          canvas.drawRRect(
+              rrect,
+              decoration._indicatorCirclePaint());
+        } else {
+          canvas.drawLine(indicator.bottomLeft, indicator.bottomRight,paint);
+        }
+
         break;
       case Axis.vertical:
         canvas.drawLine(indicator.topRight, indicator.bottomRight, paint);

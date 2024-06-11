@@ -1,3 +1,4 @@
+import 'package:example/pages/page_sample.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/material.dart';
 import 'example_route.dart';
@@ -15,24 +16,25 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: Routes.fluttercandiesMainpage,
-      onGenerateRoute: (RouteSettings settings) {
-        return onGenerateRoute(
-          settings: settings,
-          getRouteSettings: getRouteSettings,
-          routeSettingsWrapper: (FFRouteSettings ffRouteSettings) {
-            if (ffRouteSettings.name == Routes.fluttercandiesMainpage ||
-                ffRouteSettings.name == Routes.fluttercandiesDemogrouppage) {
-              return ffRouteSettings;
-            }
-            return ffRouteSettings.copyWith(
-                builder: () => CommonWidget(
-                      child: ffRouteSettings.builder(),
-                      title: ffRouteSettings.routeName,
-                    ));
-          },
-        );
-      },
+      home: PageSample(),
+      // initialRoute: Routes.fluttercandiesMainpage,
+      // onGenerateRoute: (RouteSettings settings) {
+      //   return onGenerateRoute(
+      //     settings: settings,
+      //     getRouteSettings: getRouteSettings,
+      //     routeSettingsWrapper: (FFRouteSettings ffRouteSettings) {
+      //       if (ffRouteSettings.name == Routes.fluttercandiesMainpage ||
+      //           ffRouteSettings.name == Routes.fluttercandiesDemogrouppage) {
+      //         return ffRouteSettings;
+      //       }
+      //       return ffRouteSettings.copyWith(
+      //           builder: () => CommonWidget(
+      //                 child: ffRouteSettings.builder(),
+      //                 title: ffRouteSettings.routeName,
+      //               ));
+      //     },
+      //   );
+      // },
     );
   }
 }
